@@ -39,12 +39,9 @@ public class Pss extends JavaPlugin{
 	static File languageFile = new File(mainDirectory + File.separator + "lang");
 	static File signsFile = new File(mainDirectory + File.separator + "signs");
 	
-	
-	private final PssPluginListener pluginListener = new PssPluginListener(this);
 	private final PssPlayerListener playerListener = new PssPlayerListener(this);
 	private final PssSignListener signListener = new PssSignListener(this);
 	private final PssBlockListener blockListener = new PssBlockListener(this);
-	private final PssPermissionsHandler permissionsHandler = new PssPermissionsHandler(this);
 
 	Logger log = Logger.getLogger("Minecraft");
 	
@@ -137,14 +134,11 @@ public class Pss extends JavaPlugin{
 		if(signsFile.exists()) loadSigns();
 		afkState.clear();
 		
-		PssPermissionsHandler.initialize(getServer());
-		
 		PluginManager pluginManager = getServer().getPluginManager();
 		
 		pluginManager.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
 		pluginManager.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
 		pluginManager.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-		pluginManager.registerEvent(Event.Type.PLUGIN_ENABLE, pluginListener, Priority.Monitor, this);
         pluginManager.registerEvent(Event.Type.SIGN_CHANGE, signListener, Event.Priority.Normal, this);
         pluginManager.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Monitor, this);
         
