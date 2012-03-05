@@ -1,0 +1,39 @@
+name: PlayerStatusSigns
+main: com.nuclearw.pss.Pss
+version: ${project.version}
+author: NuclearW
+description: PlayerStatusSigns allows you to create signs that show online status of users
+commands:
+   afk:
+      description: Set afk on/off or toggle
+      usage: |
+         /<command> [on|off]
+   pss:
+      description: PSS admin control command
+      usage: |
+         /<command> [dump|load|save|check]
+permissions:
+    pss.*:
+        description: Gives access to all PSS commands
+        children:
+            pss.afk: true
+            pss.admin: true
+            pss.create: true
+            pss.create.other: true
+    pss.create.*:
+        description: Gives access to all PSS create commands
+        children:
+            pss.create: true
+            pss.create.other: true
+    pss.afk:
+        description: Allows you to set your afk status
+        default: op
+    pss.admin:
+        description: Allows you to use PSS debugging and admin commands
+        default: op
+    pss.create:
+        description: Allows you to create PSS signs for yourself
+        default: op
+    pss.create.other:
+        description: Allows you to create PSS signs for any user
+        default: op

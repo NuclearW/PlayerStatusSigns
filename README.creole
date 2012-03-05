@@ -1,0 +1,25 @@
+== PlayerStatusSigns
+
+PlayerStatusSigns allows you to create signs that show online status of users
+
+=== Commands
+
+* /afk (on|off)
+* /pss <dump|load|save|check>
+
+=== Permissions
+
+* pss.afk
+** //Allows you to set your afk status//
+* pss.admin
+** //Allows you to use PSS debugging and admin commands//
+* pss.create
+** //Allows you to create PSS signs for yourself//
+* pss.create.other
+** //Allows you to create PSS signs for any user//
+
+All permissions default to **op**
+
+=== Compiling
+
+Maven 3 is required to compile PlayerStatusSigns
