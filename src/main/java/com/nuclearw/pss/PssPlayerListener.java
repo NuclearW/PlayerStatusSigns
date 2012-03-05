@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PssPlayerListener implements Listener {
 	public static Pss plugin;
-	
+
 	public PssPlayerListener(Pss instance) {
 		plugin = instance;
 	}

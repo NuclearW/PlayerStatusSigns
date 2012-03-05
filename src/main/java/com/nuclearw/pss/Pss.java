@@ -36,13 +36,13 @@ public class Pss extends JavaPlugin{
 	static File versionFile = new File(mainDirectory + File.separator + "VERSION");
 	static File languageFile = new File(mainDirectory + File.separator + "lang");
 	static File signsFile = new File(mainDirectory + File.separator + "signs");
-	
+
 	private final PssPlayerListener playerListener = new PssPlayerListener(this);
 	private final PssSignListener signListener = new PssSignListener(this);
 	private final PssBlockListener blockListener = new PssBlockListener(this);
 
 	Logger log = Logger.getLogger("Minecraft");
-	
+
 	/*
 	 * 0 = Online
 	 * 1 = Offline
@@ -55,10 +55,10 @@ public class Pss extends JavaPlugin{
 
 	public HashMap<String, Block[]> signs = new HashMap<String, Block[]>();
 	public HashMap<String, Boolean> afkState = new HashMap<String, Boolean>();
-	
+
 	public void onEnable() {
 		new File(mainDirectory).mkdir();
-		
+
 		if(!versionFile.exists()) {
 			updateVersion();
 		} else {
@@ -69,9 +69,9 @@ public class Pss extends JavaPlugin{
 			if(vnum.equals("0.3")) updateVersion();
 			if(vnum.equals("0.4.1")) updateVersion();
 		}
-		
+
 		Properties prop = new Properties();
-		
+
 		if(!languageFile.exists()) {
 			try {
 				languageFile.createNewFile();
@@ -90,7 +90,7 @@ public class Pss extends JavaPlugin{
 				ex.printStackTrace();
 			}
 		}
-		
+
 		FileInputStream langin;
 		try {
 			langin = new FileInputStream(languageFile);
@@ -101,7 +101,7 @@ public class Pss extends JavaPlugin{
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		if(!prop.containsKey("online") || !prop.containsKey("offline") || !prop.containsKey("afk") || !prop.containsKey("since") || !prop.containsKey("not-afk") || !prop.containsKey("now-afk")) {
 			log.severe("[PSS] PlayerStatusSigns lang file incomplete! Reverting to default!");
 			try {
@@ -128,16 +128,16 @@ public class Pss extends JavaPlugin{
 		this.language[3] = prop.getProperty("since");
 		this.language[4] = prop.getProperty("now-afk");
 		this.language[5] = prop.getProperty("not-afk");
-		
+
 		if(signsFile.exists()) loadSigns();
 		afkState.clear();
-		
+
 		PluginManager pluginManager = getServer().getPluginManager();
 
 		pluginManager.registerEvents(playerListener, this);
 		pluginManager.registerEvents(signListener, this);
 		pluginManager.registerEvents(blockListener, this);
-		
+
 		log.addHandler(new Handler() {
 			public void publish(LogRecord logRecord) {
 				String mystring = logRecord.getMessage();
@@ -153,15 +153,15 @@ public class Pss extends JavaPlugin{
 			public void close() {
 			}
 		});
-		
+
 		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" loaded.");
 	}
-	
+
 	public void onDisable() {
 		saveSigns();
 		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" unloaded.");
 	}
-	
+
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if(cmd.getName().equalsIgnoreCase("afk")) {
 			if(!isPlayer(sender)) return true;
@@ -214,17 +214,17 @@ public class Pss extends JavaPlugin{
 		}
 		return true;
 	}
-	
+
 	public void onJoin(Player player) {
 		if(!signs.containsKey(player.getName())) return;
 		Block[] blocks = signs.get(player.getName());
 		setSigns(blocks, 0, player.getName());
 	}
-	
+
 	public void onLeave(Player player) {
 		onLeave(player.getName());
 	}
-	
+
 	public void onLeave(String playerName) {
 		if(!signs.containsKey(playerName)) return;
 		long time = System.currentTimeMillis();
@@ -232,7 +232,7 @@ public class Pss extends JavaPlugin{
 		setSigns(blocks, 1, playerName, time);
 		
 	}
-	
+
 	public void checkSigns() {
 		Set<String> keys = signs.keySet();
 		Iterator<String> i = keys.iterator();
@@ -251,11 +251,11 @@ public class Pss extends JavaPlugin{
 			}
 		}
 	}
-	
+
 	public void setSigns(String playerName) {
 		setSigns(playerName, false);
 	}
-	
+
 	public void setSigns(String playerName, Boolean newSign) {
 		if(getServer().getPlayer(playerName) != null) {
 			setSigns(signs.get(playerName), 0, playerName);
@@ -267,24 +267,24 @@ public class Pss extends JavaPlugin{
 			}
 		}
 	}
-	
+
 	public void setSigns(Block[] blocks, int mode, String playerName) {
 		setSigns(blocks, mode, playerName, System.currentTimeMillis());
 	}
-	
+
 	public void setSigns(Block[] blocks, int mode, String playerName, Long time) {
 		for(Block b : blocks) {
 
 			Chunk chunk = b.getChunk();
 			World world = b.getWorld();
 			if(!world.isChunkLoaded(chunk)) world.loadChunk(chunk);
-			
+
 			final BlockState bState = b.getState();
 			if(!(bState instanceof Sign)) {
 				this.removeSign(playerName, b);
 				return;
 			}
-			
+
 			if(mode == 0) {
 				String tUsername = null;
 			//	log.info(Integer.toString(playerName.length()));
@@ -374,7 +374,7 @@ public class Pss extends JavaPlugin{
 			}
 		}
 	}
-	
+
 	public boolean hasPermission(Player player, String permission) {
 		return player.hasPermission(permission);
 	}
@@ -389,7 +389,7 @@ public class Pss extends JavaPlugin{
 			}
 		}
 	}
-	
+
 	public void removeSign(String targetName, Block block) {
 		Block[] blocks = signs.get(targetName);
 		//How could this happen?
@@ -417,7 +417,7 @@ public class Pss extends JavaPlugin{
 		}
 		this.saveSigns();
 	}
-	
+
 	public void addSign(String targetName, Block block) {
 		Block[] blocks = signs.get(targetName);
 		if(blocks == null) {
@@ -444,7 +444,7 @@ public class Pss extends JavaPlugin{
 		*/
 		this.saveSigns();
 	}
-	
+
 	public void saveSigns() {
 		String store = "<";
 		Set<String> keys = signs.keySet();
@@ -484,7 +484,7 @@ public class Pss extends JavaPlugin{
 		}
 		*/
 	}
-	
+
 	public void loadSigns() {
 		byte[] buffer = new byte[(int) signsFile.length()];
 		signs.clear();
@@ -518,9 +518,9 @@ public class Pss extends JavaPlugin{
 					int y = Integer.parseInt(data[2]);
 					int z = Integer.parseInt(data[3]);
 					String world = data[4];
-					
+
 					Block dataBlock = getServer().getWorld(world).getBlockAt(x, y, z);
-					
+
 					Block[] blocks = signs.get(player);
 					if(blocks == null) {
 						ArrayList<Block> newBlocksList = new ArrayList<Block>();
@@ -551,15 +551,15 @@ public class Pss extends JavaPlugin{
 			store = store.substring(cutEnd+1);
 		//	log.info("store: "+store);
 		}
-		
+
 		String player = data[0];
 		int x = Integer.parseInt(data[1]);
 		int y = Integer.parseInt(data[2]);
 		int z = Integer.parseInt(data[3]);
 		String world = data[4];
-		
+
 		Block dataBlock = getServer().getWorld(world).getBlockAt(x, y, z);
-		
+
 		Block[] blocks = signs.get(player);
 		if(blocks == null) {
 			ArrayList<Block> newBlocksList = new ArrayList<Block>();
@@ -576,7 +576,7 @@ public class Pss extends JavaPlugin{
 		}
 		setSigns(data[0]);
 	}
-	
+
 	public void updateVersion() {
 		try {
 			versionFile.createNewFile();
@@ -603,10 +603,10 @@ public class Pss extends JavaPlugin{
 		} finally {
 			if (f != null) try { f.close(); } catch (IOException ignored) { }
 		}
-		
+
 		return new String(buffer);
 	}
-	
+
 	public boolean isPlayer(CommandSender sender) {
 		return sender != null && sender instanceof Player;
 	}
