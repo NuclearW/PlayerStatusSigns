@@ -380,7 +380,7 @@ public class Pss extends JavaPlugin{
 	}
 	
 	public boolean hasPermission(Player player, String permission) {
-		return permissionsHandler.hasPermission(player, permission);
+		return player.hasPermission(permission);
 	}
 
 	public void removeSign(Block block) {
