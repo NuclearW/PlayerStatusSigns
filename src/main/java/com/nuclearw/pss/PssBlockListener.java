@@ -1,15 +1,18 @@
 package com.nuclearw.pss;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockListener;
 
-public class PssBlockListener extends BlockListener {
+public class PssBlockListener implements Listener {
 	public static Pss plugin;
-	
+
 	public PssBlockListener(Pss instance) {
 		plugin = instance;
 	}
-	
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		int changedMaterial = event.getBlock().getTypeId();
 		if(changedMaterial == 63 || changedMaterial == 68) {

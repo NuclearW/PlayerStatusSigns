@@ -3,16 +3,18 @@ package com.nuclearw.pss;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 
-public class PssSignListener extends BlockListener {
+public class PssSignListener implements Listener {
 	public static Pss plugin;
-	
+
 	public PssSignListener(Pss instance) {
 		plugin = instance;
 	}
-	
+
+	@EventHandler(ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
 		Player player = event.getPlayer();
 		BlockState state = event.getBlock().getState();

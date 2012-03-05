@@ -28,8 +28,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -135,12 +133,10 @@ public class Pss extends JavaPlugin{
 		afkState.clear();
 		
 		PluginManager pluginManager = getServer().getPluginManager();
-		
-		pluginManager.registerEvent(Event.Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
-		pluginManager.registerEvent(Event.Type.PLAYER_KICK, playerListener, Priority.Monitor, this);
-		pluginManager.registerEvent(Event.Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-        pluginManager.registerEvent(Event.Type.SIGN_CHANGE, signListener, Event.Priority.Normal, this);
-        pluginManager.registerEvent(Event.Type.BLOCK_BREAK, blockListener, Event.Priority.Monitor, this);
+
+		pluginManager.registerEvents(playerListener, this);
+        pluginManager.registerEvents(signListener, this);
+        pluginManager.registerEvents(blockListener, this);
         
         log.addHandler(new Handler() {
         	public void publish(LogRecord logRecord) {
