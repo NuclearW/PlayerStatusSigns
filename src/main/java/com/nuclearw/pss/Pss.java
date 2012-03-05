@@ -135,31 +135,31 @@ public class Pss extends JavaPlugin{
 		PluginManager pluginManager = getServer().getPluginManager();
 
 		pluginManager.registerEvents(playerListener, this);
-        pluginManager.registerEvents(signListener, this);
-        pluginManager.registerEvents(blockListener, this);
-        
-        log.addHandler(new Handler() {
-        	public void publish(LogRecord logRecord) {
-        		String mystring = logRecord.getMessage();
-        		if(mystring.contains(" lost connection: ")) {
-        			String myarray[] = mystring.split(" ");
-        			String playerName = myarray[0];
-        			String DisconnectMessage = myarray[3];
-        			if(DisconnectMessage.equals("disconnect.quitting")) return;
-        			onLeave(playerName);
-        		}
-        	}
-        	public void flush() {}
-        	public void close() {
-        	}
-        });
-        
-        log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" loaded.");
+		pluginManager.registerEvents(signListener, this);
+		pluginManager.registerEvents(blockListener, this);
+		
+		log.addHandler(new Handler() {
+			public void publish(LogRecord logRecord) {
+				String mystring = logRecord.getMessage();
+				if(mystring.contains(" lost connection: ")) {
+					String myarray[] = mystring.split(" ");
+					String playerName = myarray[0];
+					String DisconnectMessage = myarray[3];
+					if(DisconnectMessage.equals("disconnect.quitting")) return;
+					onLeave(playerName);
+				}
+			}
+			public void flush() {}
+			public void close() {
+			}
+		});
+		
+		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" loaded.");
 	}
 	
 	public void onDisable() {
 		saveSigns();
-        log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" unloaded.");
+		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" unloaded.");
 	}
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -297,12 +297,12 @@ public class Pss extends JavaPlugin{
 				final String mOnline = ("&a"+this.language[0]).replaceAll("(&([a-f0-9]))", "\u00A7$2");
 				getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 					public void run() {
-	                    Sign sign = (Sign) bState;
-	                    sign.setLine(0, mUsername);
-	                    sign.setLine(1, mOnline);
-	                    sign.setLine(2, "");
-	                    sign.setLine(3, "");
-	                    sign.update();
+						Sign sign = (Sign) bState;
+						sign.setLine(0, mUsername);
+						sign.setLine(1, mOnline);
+						sign.setLine(2, "");
+						sign.setLine(3, "");
+						sign.update();
 					}
 				});
 			} else if(mode == 1) {
@@ -363,12 +363,12 @@ public class Pss extends JavaPlugin{
 				final String mDate = ("&e"+DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date(time))).replaceAll("(&([a-f0-9]))", "\u00A7$2");
 				getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
 					public void run() {
-	                    Sign sign = (Sign) bState;
-	                    sign.setLine(0, mUsername);
-	                    sign.setLine(1, mAfk);
-	                    sign.setLine(2, mSince);
-	                    sign.setLine(3, mDate);
-	                    sign.update();
+						Sign sign = (Sign) bState;
+						sign.setLine(0, mUsername);
+						sign.setLine(1, mAfk);
+						sign.setLine(2, mSince);
+						sign.setLine(3, mDate);
+						sign.update();
 					}
 				});
 			}
@@ -607,7 +607,7 @@ public class Pss extends JavaPlugin{
 		return new String(buffer);
 	}
 	
-    public boolean isPlayer(CommandSender sender) {
-        return sender != null && sender instanceof Player;
-    }
+	public boolean isPlayer(CommandSender sender) {
+		return sender != null && sender instanceof Player;
+	}
 }
