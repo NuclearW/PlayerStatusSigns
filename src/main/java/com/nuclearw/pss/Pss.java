@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -54,7 +55,7 @@ public class Pss extends JavaPlugin{
 	String[] language = new String[6];
 
 	public HashMap<String, Block[]> signs = new HashMap<String, Block[]>();
-	public HashMap<String, Boolean> afkState = new HashMap<String, Boolean>();
+	public HashSet<String> afkState = new HashSet<String>();
 
 	public void onEnable() {
 		new File(mainDirectory).mkdir();
@@ -175,21 +176,21 @@ public class Pss extends JavaPlugin{
 			if(args.length == 1) {
 				if(args[0].equalsIgnoreCase("on")) {
 					setSigns(pSigns, 2, playerName);
-					this.afkState.put(playerName, true);
+					if(!this.afkState.contains(playerName)) this.afkState.add(playerName);
 					sender.sendMessage(language[4]);
 				} else if(args[0].equalsIgnoreCase("off")) {
 					setSigns(pSigns, 0, playerName);
-					this.afkState.put(playerName, false);
+					if(this.afkState.contains(playerName)) this.afkState.remove(playerName);
 					sender.sendMessage(language[5]);
 				}
 			} else {
-				if(!this.afkState.containsKey(playerName) || !this.afkState.get(playerName)) {
+				if(!this.afkState.contains(playerName)) {
 					setSigns(pSigns, 2, playerName);
-					this.afkState.put(playerName, true);
+					this.afkState.add(playerName);
 					sender.sendMessage(language[4]);
 				} else {
 					setSigns(pSigns, 0, playerName);
-					this.afkState.put(playerName, false);
+					this.afkState.remove(playerName);
 					sender.sendMessage(language[5]);
 				}
 			}
