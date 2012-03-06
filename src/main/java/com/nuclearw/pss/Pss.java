@@ -469,9 +469,9 @@ public class Pss extends JavaPlugin{
 			int cutBegin = store.indexOf('<');
 			int cutEnd = store.indexOf('>');
 			String storeEntry = store.substring(cutBegin+1, cutEnd);
-		//	log.info("storeEntry: "+storeEntry);
+//			log.info("storeEntry: "+storeEntry);
 			data[0] = storeEntry.substring(0, storeEntry.indexOf(';'));
-		//	log.info("data: "+data[0]);
+//			log.info("data: "+data[0]);
 			storeEntry = storeEntry.substring(storeEntry.indexOf(';')+1);
 			int i = 1;
 			while(storeEntry.contains(";") || i == 4 || i == 5) {
@@ -495,39 +495,23 @@ public class Pss extends JavaPlugin{
 					}
 					setSigns(data[0]);
 					i = 1;
-					break;
+
+					if(!storeEntry.contains(";")) {
+						break;
+					}
 				}
 				if(i == 4 && !storeEntry.contains(";")) {
 					data[i] = storeEntry.substring(0);
 				} else {
 					data[i] = storeEntry.substring(0, storeEntry.indexOf(';'));
 				}
-		//		log.info("data "+Integer.toString(i)+": "+data[i]);
+//				log.info("data "+Integer.toString(i)+": "+data[i]);
 				storeEntry = storeEntry.substring(storeEntry.indexOf(';')+1);
 				i++;
 			}
 			store = store.substring(cutEnd+1);
-		//	log.info("store: "+store);
+//			log.info("store: "+store);
 		}
-
-		String player = data[0];
-		int x = Integer.parseInt(data[1]);
-		int y = Integer.parseInt(data[2]);
-		int z = Integer.parseInt(data[3]);
-		String world = data[4];
-
-		Block dataBlock = getServer().getWorld(world).getBlockAt(x, y, z);
-
-		ArrayList<Block> blocks = signs.get(player);
-		if(blocks == null) {
-			ArrayList<Block> newBlocksList = new ArrayList<Block>();
-			newBlocksList.add(dataBlock);
-			signs.put(player, newBlocksList);
-		} else {
-			blocks.add(dataBlock);
-			signs.put(player, blocks);
-		}
-		setSigns(data[0]);
 	}
 
 	public void updateVersion() {
