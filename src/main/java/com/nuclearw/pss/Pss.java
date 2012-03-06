@@ -10,7 +10,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +53,7 @@ public class Pss extends JavaPlugin{
 	 */
 	String[] language = new String[6];
 
-	public HashMap<String, Block[]> signs = new HashMap<String, Block[]>();
+	public HashMap<String, ArrayList<Block>> signs = new HashMap<String, ArrayList<Block>>();
 	public HashSet<String> afkState = new HashSet<String>();
 
 	public void onEnable() {
@@ -170,7 +169,7 @@ public class Pss extends JavaPlugin{
 			if(!this.hasPermission((Player) sender, "pss.afk")) return true;
 		//	log.info("has permission");
 			String playerName = ((Player) sender).getName();
-			Block[] pSigns = signs.get(playerName);
+			ArrayList<Block> pSigns = signs.get(playerName);
 			if(pSigns == null) return true;
 		//	log.info("has a sign");
 			if(args.length == 1) {
@@ -218,7 +217,7 @@ public class Pss extends JavaPlugin{
 
 	public void onJoin(Player player) {
 		if(!signs.containsKey(player.getName())) return;
-		Block[] blocks = signs.get(player.getName());
+		ArrayList<Block> blocks = signs.get(player.getName());
 		setSigns(blocks, 0, player.getName());
 	}
 
@@ -229,7 +228,7 @@ public class Pss extends JavaPlugin{
 	public void onLeave(String playerName) {
 		if(!signs.containsKey(playerName)) return;
 		long time = System.currentTimeMillis();
-		Block[] blocks = signs.get(playerName);
+		ArrayList<Block> blocks = signs.get(playerName);
 		setSigns(blocks, 1, playerName, time);
 		
 	}
@@ -239,7 +238,7 @@ public class Pss extends JavaPlugin{
 		Iterator<String> i = keys.iterator();
 		while(i.hasNext()) {
 			String playerName = i.next();
-			Block[] blocks = signs.get(playerName);
+			ArrayList<Block> blocks = signs.get(playerName);
 			for(Block b : blocks) {
 				Chunk chunk = b.getChunk();
 				World world = b.getWorld();
@@ -269,13 +268,12 @@ public class Pss extends JavaPlugin{
 		}
 	}
 
-	public void setSigns(Block[] blocks, int mode, String playerName) {
-		setSigns(blocks, mode, playerName, System.currentTimeMillis());
+	public void setSigns(ArrayList<Block> arrayList, int mode, String playerName) {
+		setSigns(arrayList, mode, playerName, System.currentTimeMillis());
 	}
 
-	public void setSigns(Block[] blocks, int mode, String playerName, Long time) {
-		for(Block b : blocks) {
-
+	public void setSigns(ArrayList<Block> arrayList, int mode, String playerName, Long time) {
+		for(Block b : arrayList) {
 			Chunk chunk = b.getChunk();
 			World world = b.getWorld();
 			if(!world.isChunkLoaded(chunk)) world.loadChunk(chunk);
@@ -382,9 +380,8 @@ public class Pss extends JavaPlugin{
 
 	public void removeSign(Block block) {
 		for(String playerName : signs.keySet()) {
-			Block[] blocks = signs.get(playerName);
-			ArrayList<Block> testBlocksList = new ArrayList<Block>(Arrays.asList(blocks));
-			if(testBlocksList.contains(block)) {
+			ArrayList<Block> blocks = signs.get(playerName);
+			if(blocks.contains(block)) {
 				removeSign(playerName, block);
 				return;
 			}
@@ -392,57 +389,31 @@ public class Pss extends JavaPlugin{
 	}
 
 	public void removeSign(String targetName, Block block) {
-		Block[] blocks = signs.get(targetName);
+		ArrayList<Block> blocks = signs.get(targetName);
 		//How could this happen?
 		if(blocks == null) {
 			log.severe("[PSS] Unexpected Error 1.");
 			return;
 		}
-		if(blocks.length-1 < 1) {
+		if(blocks.size()-1 < 1) {
 			signs.remove(targetName);
 		} else {
-			ArrayList<Block> newBlocksList = new ArrayList<Block>(Arrays.asList(blocks));
-			newBlocksList.remove(block);
-			Block[] newBlocks = new Block[newBlocksList.size()];
-			newBlocks = newBlocksList.toArray(newBlocks);
-			signs.put(targetName, newBlocks);
-			/*
-			Block[] newBlocks = new Block[blocks.length-1];
-			int i = 0;
-			for(Block b : blocks) {
-				if(b == block) break;
-				newBlocks[i] = b;
-				i++;
-			}
-			*/
+			blocks.remove(block);
+			signs.put(targetName, blocks);
 		}
 		this.saveSigns();
 	}
 
 	public void addSign(String targetName, Block block) {
-		Block[] blocks = signs.get(targetName);
+		ArrayList<Block> blocks = signs.get(targetName);
 		if(blocks == null) {
-			ArrayList<Block> newBlocksList = new ArrayList<Block>();
-			newBlocksList.add(block);
-			Block[] newBlocks = new Block[newBlocksList.size()];
-			newBlocks = newBlocksList.toArray(newBlocks);
+			ArrayList<Block> newBlocks = new ArrayList<Block>();
+			newBlocks.add(block);
 			signs.put(targetName, newBlocks);
 		} else {
-			ArrayList<Block> newBlocksList = new ArrayList<Block>(Arrays.asList(blocks));
-			newBlocksList.add(block);
-			Block[] newBlocks = new Block[newBlocksList.size()];
-			newBlocks = newBlocksList.toArray(newBlocks);
-			signs.put(targetName, newBlocks);
+			blocks.add(block);
+			signs.put(targetName, blocks);
 		}
-		/*
-		Block[] newBlocks = new Block[blocks.length+1];
-		int i = 0;
-		for(Block b : blocks) {
-			newBlocks[i] = b;
-			i++;
-		}
-		newBlocks[i] = block;
-		*/
 		this.saveSigns();
 	}
 
@@ -453,7 +424,7 @@ public class Pss extends JavaPlugin{
 		while(i.hasNext()) {
 			String player = i.next();
 			store += player + ";";
-			Block[] blocks = signs.get(player);
+			ArrayList<Block> blocks = signs.get(player);
 			for(Block b : blocks) {
 				store += Integer.toString(b.getX()) + ";";
 				store += Integer.toString(b.getY()) + ";";
@@ -473,17 +444,6 @@ public class Pss extends JavaPlugin{
 		} catch (SecurityException ex) {
 			ex.printStackTrace();
 		}
-		/*
-		try {
-			ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream(signsFile));
-			obj.writeObject(signs);
-			obj.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		*/
 	}
 
 	public void loadSigns() {
@@ -522,19 +482,14 @@ public class Pss extends JavaPlugin{
 
 					Block dataBlock = getServer().getWorld(world).getBlockAt(x, y, z);
 
-					Block[] blocks = signs.get(player);
+					ArrayList<Block> blocks = signs.get(player);
 					if(blocks == null) {
 						ArrayList<Block> newBlocksList = new ArrayList<Block>();
 						newBlocksList.add(dataBlock);
-						Block[] newBlocks = new Block[newBlocksList.size()];
-						newBlocks = newBlocksList.toArray(newBlocks);
-						signs.put(player, newBlocks);
+						signs.put(player, newBlocksList);
 					} else {
-						ArrayList<Block> newBlocksList = new ArrayList<Block>(Arrays.asList(blocks));
-						newBlocksList.add(dataBlock);
-						Block[] newBlocks = new Block[newBlocksList.size()];
-						newBlocks = newBlocksList.toArray(newBlocks);
-						signs.put(player, newBlocks);
+						blocks.add(dataBlock);
+						signs.put(player, blocks);
 					}
 					setSigns(data[0]);
 					i = 1;
@@ -561,19 +516,14 @@ public class Pss extends JavaPlugin{
 
 		Block dataBlock = getServer().getWorld(world).getBlockAt(x, y, z);
 
-		Block[] blocks = signs.get(player);
+		ArrayList<Block> blocks = signs.get(player);
 		if(blocks == null) {
 			ArrayList<Block> newBlocksList = new ArrayList<Block>();
 			newBlocksList.add(dataBlock);
-			Block[] newBlocks = new Block[newBlocksList.size()];
-			newBlocks = newBlocksList.toArray(newBlocks);
-			signs.put(player, newBlocks);
+			signs.put(player, newBlocksList);
 		} else {
-			ArrayList<Block> newBlocksList = new ArrayList<Block>(Arrays.asList(blocks));
-			newBlocksList.add(dataBlock);
-			Block[] newBlocks = new Block[newBlocksList.size()];
-			newBlocks = newBlocksList.toArray(newBlocks);
-			signs.put(player, newBlocks);
+			blocks.add(dataBlock);
+			signs.put(player, blocks);
 		}
 		setSigns(data[0]);
 	}
