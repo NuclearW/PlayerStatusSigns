@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.nuclearw.pss</groupId>
     <artifactId>PlayerStatusSigns</artifactId>
-    <version>1.0</version>
+    <version>0.6</version>
     <name>PlayerStatusSigns</name>
     <url>https://github.com/NuclearW/PlayerStatusSigns</url>
     <issueManagement>

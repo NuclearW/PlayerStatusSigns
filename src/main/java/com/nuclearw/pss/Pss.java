@@ -41,7 +41,7 @@ public class Pss extends JavaPlugin{
 	private final PssSignListener signListener = new PssSignListener(this);
 	private final PssBlockListener blockListener = new PssBlockListener(this);
 
-	Logger log = Logger.getLogger("Minecraft");
+	Logger log;
 
 	/*
 	 * 0 = Online
@@ -57,6 +57,8 @@ public class Pss extends JavaPlugin{
 	public HashSet<String> afkState = new HashSet<String>();
 
 	public void onEnable() {
+		this.log = this.getLogger();
+
 		new File(mainDirectory).mkdir();
 
 		if(!versionFile.exists()) {
@@ -103,7 +105,7 @@ public class Pss extends JavaPlugin{
 		}
 
 		if(!prop.containsKey("online") || !prop.containsKey("offline") || !prop.containsKey("afk") || !prop.containsKey("since") || !prop.containsKey("not-afk") || !prop.containsKey("now-afk")) {
-			log.severe("[PSS] PlayerStatusSigns lang file incomplete! Reverting to default!");
+			log.severe("PlayerStatusSigns lang file incomplete! Reverting to default!");
 			try {
 				languageFile.createNewFile();
 				FileOutputStream out = new FileOutputStream(languageFile);
@@ -154,12 +156,12 @@ public class Pss extends JavaPlugin{
 			}
 		});
 
-		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" loaded.");
+		log.info("PlayerStatusSigns version "+this.getDescription().getVersion()+" loaded.");
 	}
 
 	public void onDisable() {
 		saveSigns();
-		log.info("[PSS] PlayerStatusSigns version "+this.getDescription().getVersion()+" unloaded.");
+		log.info("PlayerStatusSigns version "+this.getDescription().getVersion()+" unloaded.");
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
@@ -392,7 +394,7 @@ public class Pss extends JavaPlugin{
 		ArrayList<Block> blocks = signs.get(targetName);
 		//How could this happen?
 		if(blocks == null) {
-			log.severe("[PSS] Unexpected Error 1.");
+			log.severe("Unexpected Error 1.");
 			return;
 		}
 		if(blocks.size()-1 < 1) {
